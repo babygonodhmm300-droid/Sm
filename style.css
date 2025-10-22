@@ -1,0 +1,380 @@
+/* style.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+    border-bottom: 3px solid;
+    border-image: linear-gradient(90deg, transparent, #4a90e2, #ffd700, #4a90e2, transparent) 1;
+    animation: headerGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes headerGlow {
+    0% {
+        border-image-source: linear-gradient(90deg, transparent, #4a90e2, #ffd700, #4a90e2, transparent);
+    }
+    100% {
+        border-image-source: linear-gradient(90deg, transparent, #ffd700, #4a90e2, #ffd700, transparent);
+    }
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+    background: linear-gradient(45deg, #4a90e2, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    text-shadow: 0 0 30px rgba(74, 144, 226, 0.3);
+}
+
+header h1 i {
+    font-size: 3rem;
+    background: linear-gradient(45deg, #ffd700, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+/* Navigation */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 25px;
+}
+
+.nav-btn {
+    background: linear-gradient(135deg, #2d3748, #4a5568);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.8rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.nav-btn:hover::before {
+    left: 100%;
+}
+
+.nav-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+    border-color: #4a90e2;
+    background: linear-gradient(135deg, #4a90e2, #2d3748);
+}
+
+.nav-btn.active {
+    background: linear-gradient(135deg, #ffd700, #ff6b6b);
+    border-color: #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Profile Section */
+.profile-section {
+    background: rgba(30, 30, 30, 0.8);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #333;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.profile-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: #ffd700;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-section h2 i {
+    font-size: 2rem;
+    color: #4a90e2;
+}
+
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.profile-info, .profile-description {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.profile-info p, .profile-description p {
+    font-size: 1.1rem;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border-left: 4px solid #4a90e2;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-info p:hover, .profile-description p:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+    border-left-color: #ffd700;
+}
+
+.profile-info p i, .profile-description p i {
+    font-size: 1.3rem;
+    color: #ffd700;
+    min-width: 25px;
+}
+
+.profile-description p i {
+    color: #4a90e2;
+}
+
+/* Contact Section */
+.contact-section {
+    background: rgba(30, 30, 30, 0.8);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #333;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.contact-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: #ffd700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.contact-section h2 i {
+    font-size: 2rem;
+    color: #4a90e2;
+}
+
+.contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.contact-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 2.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.contact-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #4a90e2, #ffd700);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 50%;
+}
+
+.contact-btn:hover::before {
+    opacity: 1;
+}
+
+.contact-btn i {
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.contact-btn:first-child {
+    background: linear-gradient(135deg, #1877f2, #0d5cb6);
+}
+
+.contact-btn:last-child {
+    background: linear-gradient(135deg, #25d366, #128c7e);
+}
+
+.contact-btn:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 12px 30px rgba(74, 144, 226, 0.5);
+}
+
+.contact-btn:hover i {
+    transform: rotate(360deg);
+    color: white;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 25px 0;
+    border-top: 2px solid;
+    border-image: linear-gradient(90deg, transparent, #333, transparent) 1;
+}
+
+footer p {
+    color: #888;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+footer p i {
+    color: #4a90e2;
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    nav {
+        gap: 20px;
+    }
+    
+    .nav-btn {
+        padding: 12px 20px;
+        font-size: 1.5rem;
+    }
+    
+    .profile-section, .contact-section {
+        padding: 20px;
+    }
+    
+    .contact-links {
+        gap: 20px;
+    }
+    
+    .contact-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .nav-btn {
+        padding: 10px 15px;
+        font-size: 1.3rem;
+    }
+    
+    .profile-info p, .profile-description p {
+        font-size: 1rem;
+        padding: 10px 15px;
+    }
+    
+    .contact-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #4a90e2, #ffd700);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #ffd700, #4a90e2);
+}
