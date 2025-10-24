@@ -728,53 +728,155 @@
 	});
     // ฟังก์ชันดาวน์โหลด PDF
 document.getElementById('downloadPDF').addEventListener('click', () => {
-    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-    if (transactions.length === 0) {
-        showNotification('ບໍ່ມີຂໍ້ມູນໃນລະບົບ');
-        return;
-    }
+            // ใช้ localStorage key ให้ถูกต้อง
+            const transactions = JSON.parse(localStorage.getItem('financeData')) || [];
+            
+            if (transactions.length === 0) {
+                alert('❌ ບໍ່ມີຂໍ້ມູນໃນລະບົບ');
+                return;
+            }
 
-    // สร้างข้อมูลใบเสร็จ
-    const date = new Date();
-    const today = date.toLocaleDateString('lo-LA');
-    const receiptNo = String(Math.floor(Math.random() * 9999999)).padStart(7, '0');
+            // ตรวจสอบว่า jsPDF พร้อมใช้งาน
+            if (typeof window.jspdf === 'undefined') {
+                alert('❌ ບໍ່ສາມາດໂຫຼດ PDF library ໄດ້');
+                return;
+            }
 
-    let incomeList = '';
-    let expenseList = '';
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const date = new Date();
+            const today = date.toLocaleDateString('lo-LA');
+            const receiptNo = String(Math.floor(Math.random() * 9999999)).padStart(7, '0');
 
-    transactions.forEach(t => {
-        if (t.type === 'income') {
-            incomeList += `- ${t.name} (${t.comment || 'ບໍ່ມີຄຳອະທິບາຍ'})    ${t.amount} ${t.currency}\n`;
-        } else {
-            expenseList += `- ${t.name} (${t.comment || 'ບໍ່ມີຄຳອະທິບາຍ'})    ${t.amount} ${t.currency}\n`;
-        }
-    });
+            let yPosition = 20;
+            const lineHeight = 7;
 
-    const content = `
-ໃບລາຍຮັບ-ລາຍຈ່າຍ
-ວັນທີ: ${today}
-ເລກທີ: ${receiptNo}
+            // หัวเรื่อง
+            doc.setFontSize(16);
+            doc.text('ໃບລາຍຮັບ-ລາຍຈ່າຍ', 105, yPosition, { align: 'center' });
+            yPosition += 10;
 
-ລາຍຮັບ
-${incomeList || '- ບໍ່ມີລາຍຮັບ'}
+            doc.setFontSize(12);
+            doc.text(`ວັນທີ: ${today}`, 20, yPosition);
+            doc.text(`ເລກທີ: ${receiptNo}`, 150, yPosition);
+            yPosition += 15;
 
-ລາຍຈ່າຍ
-${expenseList || '- ບໍ່ມີລາຍຈ່າຍ'}
-`;
+            // แยกข้อมูลรายรับและรายจ่าย
+            const incomeData = transactions.filter(t => t.type === 'income');
+            const expenseData = transactions.filter(t => t.type === 'expense');
 
-    // ใช้ jsPDF สร้างไฟล์ PDF
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFont('Helvetica', 'normal');
-    doc.setFontSize(14);
-    doc.text(content, 10, 20);
+            // รายรับ
+            doc.setFontSize(14);
+            doc.setTextColor(0, 128, 0); // สีเขียว
+            doc.text('ລາຍຮັບ', 20, yPosition);
+            yPosition += 10;
 
-    const fileName = `ບັນທຶກລາຍຮັບ-ຈ່າຍ_${today}.pdf`;
-    doc.save(fileName);
-});
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0); // สีดำ
 
+            if (incomeData.length === 0) {
+                doc.text('- ບໍ່ມີລາຍຮັບ', 25, yPosition);
+                yPosition += lineHeight;
+            } else {
+                incomeData.forEach((t, index) => {
+                    if (yPosition > 270) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    const amount = new Intl.NumberFormat('lo-LA').format(t.amount);
+                    doc.text(`${index + 1}. ${t.description || 'ບໍ່ມີຊື່'} - ${amount} ${t.currency}`, 25, yPosition);
+                    yPosition += lineHeight;
+                    
+                    if (t.notes) {
+                        doc.text(`   ຄຳເຫັນ: ${t.notes}`, 30, yPosition);
+                        yPosition += lineHeight;
+                    }
+                });
+            }
+
+            yPosition += 5;
+
+            // รายจ่าย
+            doc.setFontSize(14);
+            doc.setTextColor(255, 0, 0); // สีแดง
+            doc.text('ລາຍຈ່າຍ', 20, yPosition);
+            yPosition += 10;
+
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0); // สีดำ
+
+            if (expenseData.length === 0) {
+                doc.text('- ບໍ່ມີລາຍຈ່າຍ', 25, yPosition);
+                yPosition += lineHeight;
+            } else {
+                expenseData.forEach((t, index) => {
+                    if (yPosition > 270) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    const amount = new Intl.NumberFormat('lo-LA').format(t.amount);
+                    doc.text(`${index + 1}. ${t.description || 'ບໍ່ມີຊື່'} - ${amount} ${t.currency}`, 25, yPosition);
+                    yPosition += lineHeight;
+                    
+                    if (t.notes) {
+                        doc.text(`   ຄຳເຫັນ: ${t.notes}`, 30, yPosition);
+                        yPosition += lineHeight;
+                    }
+                });
+            }
+
+            // สรุปยอด
+            yPosition += 10;
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 255); // สีน้ำเงิน
+            
+            const totalIncome = incomeData.reduce((sum, t) => sum + t.amount, 0);
+            const totalExpense = expenseData.reduce((sum, t) => sum + t.amount, 0);
+            const balance = totalIncome - totalExpense;
+
+            doc.text(`ລາຍຮັບທັງໝົດ: ${new Intl.NumberFormat('lo-LA').format(totalIncome)}`, 20, yPosition);
+            yPosition += lineHeight;
+            doc.text(`ລາຍຈ່າຍທັງໝົດ: ${new Intl.NumberFormat('lo-LA').format(totalExpense)}`, 20, yPosition);
+            yPosition += lineHeight;
+            doc.text(`ຍອດເງິນຄົງເຫຼືອ: ${new Intl.NumberFormat('lo-LA').format(balance)}`, 20, yPosition);
+
+            // บันทึกไฟล์
+            const fileName = `ບັນທຶກລາຍຮັບ-ຈ່າຍ_${today.replace(/\//g, '-')}.pdf`;
+            doc.save(fileName);
+            
+            alert('✅ ດາວໂຫຼດ PDF ສຳເລັດແລ້ວ');
+        });
+
+        // เพิ่มข้อมูลตัวอย่างสำหรับทดสอบ (ถ้ายังไม่มีข้อมูล)
+        document.addEventListener('DOMContentLoaded', function() {
+            const existingData = JSON.parse(localStorage.getItem('financeData')) || [];
+            if (existingData.length === 0) {
+                const sampleData = [
+                    {
+                        id: '1',
+                        type: 'income',
+                        amount: 500000,
+                        description: 'ເງິນເດືອນ',
+                        currency: 'LAK',
+                        timestamp: new Date().toISOString()
+                    },
+                    {
+                        id: '2', 
+                        type: 'expense',
+                        amount: 150000,
+                        description: 'ຊື້ອາຫານ',
+                        currency: 'LAK',
+                        timestamp: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('financeData', JSON.stringify(sampleData));
+                alert('✅ ເພີ່ມຂໍ້ມູນຕົວຢ່າງແລ້ວ ກະລຸນາກົດດາວໂຫຼດ PDF ອີກຄັ້ງ');
+            }
+        });
 </script>
 </body>
 </html>
+
 
 
