@@ -388,6 +388,7 @@
             <button id="downloadJSON" class="secondary">📥 ດາວໂຫຼດຂໍ້ມູນ</button>
             <button id="importJSON" class="secondary">📤 ນຳເຂົ້າຂໍ້ມູນ</button>
             <button id="clearAll" class="danger">🔥 ລ້າງຂໍ້ມູນທັງໝົດ</button>
+			<button id="downloadPDF" class="action-button">📄 ດາວໂຫຼດໃບລາຍຮັບ-ລາຍຈ່າຍ</button>
         </div>
         
         <div class="data-list">
@@ -403,7 +404,7 @@
     </div>
 
     <input type="file" id="fileInput" accept=".json" style="display: none;">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
     	// ตัวแปรเก็บสถานะปัจจุบัน
 	let currentCurrency = 'LAK';
@@ -724,6 +725,54 @@
 	    // Event สำหรับล้างข้อมูลทั้งหมด
 	    document.getElementById('clearAll').addEventListener('click', clearAllData);
 	});
+    // ฟังก์ชันดาวน์โหลด PDF
+document.getElementById('downloadPDF').addEventListener('click', () => {
+    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    if (transactions.length === 0) {
+        showNotification('ບໍ່ມີຂໍ້ມູນໃນລະບົບ');
+        return;
+    }
+
+    // สร้างข้อมูลใบเสร็จ
+    const date = new Date();
+    const today = date.toLocaleDateString('lo-LA');
+    const receiptNo = String(Math.floor(Math.random() * 9999999)).padStart(7, '0');
+
+    let incomeList = '';
+    let expenseList = '';
+
+    transactions.forEach(t => {
+        if (t.type === 'income') {
+            incomeList += `- ${t.name} (${t.comment || 'ບໍ່ມີຄຳອະທິບາຍ'})    ${t.amount} ${t.currency}\n`;
+        } else {
+            expenseList += `- ${t.name} (${t.comment || 'ບໍ່ມີຄຳອະທິບາຍ'})    ${t.amount} ${t.currency}\n`;
+        }
+    });
+
+    const content = `
+ໃບລາຍຮັບ-ລາຍຈ່າຍ
+ວັນທີ: ${today}
+ເລກທີ: ${receiptNo}
+
+ລາຍຮັບ
+${incomeList || '- ບໍ່ມີລາຍຮັບ'}
+
+ລາຍຈ່າຍ
+${expenseList || '- ບໍ່ມີລາຍຈ່າຍ'}
+`;
+
+    // ใช้ jsPDF สร้างไฟล์ PDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(14);
+    doc.text(content, 10, 20);
+
+    const fileName = `ບັນທຶກລາຍຮັບ-ຈ່າຍ_${today}.pdf`;
+    doc.save(fileName);
+});
+
 </script>
 </body>
 </html>
+
